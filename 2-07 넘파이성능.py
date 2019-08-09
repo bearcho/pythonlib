@@ -14,6 +14,8 @@ def alloc2DMemory(height, width) :
 
 def loadImage(fname) :
     global window, canvas, paper, filename, inImage, outImage, inW, inH, outW, outH
+
+    print(fname)
     fsize = os.path.getsize(fname) # 파일 크기 확인
     inH = inW = int(math.sqrt(fsize))  # 입력메모리 크기 결정! (중요)
 
