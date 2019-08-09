@@ -9,12 +9,7 @@ import time
 ### 함수부 ###
 ### 메모리를 확보해서 반환하는 함수
 def alloc2DMemory(height, width) :
-    retMemory = [];   tmpList = []
-    for i in range(height):  # 출력메모리 확보(0으로 초기화)
-        tmpList = []
-        for k in range(width):
-            tmpList.append(0)
-        retMemory.append(tmpList)
+    retMemory = np.zeros((height,width),dtype='uint8')
     return retMemory
 
 def loadImage(fname) :
@@ -31,11 +26,12 @@ def loadImage(fname) :
     print(len(inImage))
 
     # 파일 --> 메모리로 데이터 로딩
-    fp = open(fname, 'rb') # 파일 열기(바이너리 모드)
-    for  i  in range(inH) :
-        for  k  in  range(inW) :
-            inImage[i][k] =  int(ord(fp.read(1)))
-    fp.close()
+
+    # fp = open(fname, 'rb') # 파일 열기(바이너리 모드)
+    # for  i  in range(inH) :
+    #     for  k  in  range(inW) :
+    #         inImage[i][k] =  int(ord(fp.read(1)))
+    # fp.close()
 
 def openFile() :
     global window, canvas, paper, filename,inImage, outImage,inW, inH, outW, outH
@@ -85,33 +81,30 @@ def  equal() :  # 동일 영상 알고리즘
     # (중요!) 출력이미지의 크기를 결정(알고리즘에 따라서..)
     outH = inH;  outW = inW
     # 메모리 확보
-    outImage = alloc2DMemory(outH, outW)
-    ###### 여기가 진짜 영상처리 알고리즘 ######
-    for i in range(inH) :
-        for k in range(inW):
-            outImage[i][k] = inImage[i][k]
+    outImage = inImage[:]
     ########################################
     display()
 
 def  addImage() :  # 더하기 영상 알고리즘
     global window, canvas, paper,inImage, outImage ,inW, outW, inH, outH, filename
-    if inImage == None :
-        return
+    # if inImage == None :
+    #     return
     # (중요!) 출력이미지의 크기를 결정(알고리즘에 따라서..)
     outH = inH;  outW = inW
+    start = time.time()
     # 메모리 확보
-    outImage = alloc2DMemory(outH, outW)
+    # outImage = alloc2DMemory(outH, outW)
     ###### 여기가 진짜 영상처리 알고리즘 ######
     value = askinteger("숫자입럭", "숫자 :", minvalue=1, maxvalue = 255)
-    for i in range(inH) :
-        for k in range(inW):
-            data = inImage[i][k] + value
-            if data > 255 :
-                outImage[i][k] = 255
-            else :
-                outImage[i][k] = inImage[i][k] + value
+    inImage = inImage.astype(np.int16)
+    ##조건 범위 지정
+    outImage = inImage + value
+    outImage = np.where(outImage> 255, 255,outImage)
+    inImage = inImage.astype(np.uint8)
     ########################################
     display()
+    seconds = time.time() - start
+    status.configure(text=status.cget('text') + '\t\t 걸린초 :' + '{0:.2f}'.format(seconds))
 
 def  bwImage() :  #
     global window, canvas, paper,inImage, outImage ,inW, outW, inH, outH, filename

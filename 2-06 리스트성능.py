@@ -96,6 +96,7 @@ def  addImage() :  # 더하기 영상 알고리즘
         return
     # (중요!) 출력이미지의 크기를 결정(알고리즘에 따라서..)
     outH = inH;  outW = inW
+    start = time.time()
     # 메모리 확보
     outImage = alloc2DMemory(outH, outW)
     ###### 여기가 진짜 영상처리 알고리즘 ######
@@ -109,6 +110,8 @@ def  addImage() :  # 더하기 영상 알고리즘
                 outImage[i][k] = inImage[i][k] + value
     ########################################
     display()
+    seconds = time.time() - start
+    status.configure(text=status.cget('text') + '\t\t 걸린초 :' + '{0:.2f}'.format(seconds))
 
 def  bwImage() :  #
     global window, canvas, paper,inImage, outImage ,inW, outW, inH, outH, filename
